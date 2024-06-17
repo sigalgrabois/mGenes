@@ -74,43 +74,5 @@ config/rs_catalog.json
 
 
 
-## change log
-
-[sigal 01/02/2023 12:43]
-LevHai Parser v1.1.1 - fixed line 56 "SampleName[i] = SampleName[i]" deleted this part, the current code only remove the
-parentheses and keep the number within, result in wrong sample number.
-
-- now working and deleting the parentheses and the number within.
-
-[chen 24/01/2023 16:17]
-LevHai Parser v1.1.1.1 - new code to include catalogue of rs#, every execution need to repopulate the data.
-LevHai Parser v1.1.1 - line 56 "SampleName[i] = SampleName[i]" deleted this part, the current code only remove the
-parentheses and keep the number within, result in wrong sample number.
-LevHai Parser v1.1 - update to include script_log.txt file (need to include error msgs).
-
-- The code for sctipr_log was not saved...
-
-[sigal 26/02/2023 14:00]
-LevHai Parser v1.1.1 - added the sample class in order to add the missing rs from the catalog
-
-[sigal 09/03/2023 14:00]
-LevHai Parser v1.1.1 - renaming the file to LevHai Parser VCF.py, fixing the running time of the check depth function
-added catalog and sample class to the code
-LevHai Parser v1.1 - renaming the file to LevHai Parser SampleSh.&Sums.py
-LevHai Parser v1.1.1.1 - renaming the file to LevHai Catalog.py
-
-[sigal 11/03/2023 14:00]
-LevHai Parser v1.1.1 - renaming the file to LevHai Parser VCF.py, fixing the running time of the check depth function
-added catalog and sample class to the code
-LevHai Parser v1.1 - renaming the file to LevHai Parser SampleSh.&Sums.py
-LevHai Parser v1.1.1.1 - renaming the file to LevHai Catalog.py
-
-[sigal 01/04/2023 13:00]
-LevHai parser SampleSh.&Sums.py -  added a reformat function to create the json file for the VCF parser - as list of jsons
-                                -  use the remove suffix function to remove the suffix from the sample name
-                                -  use function to replace the '-' with '_' in the sample name
-LevHai parser rs_catalog.py     - added at the end the option to press any key to exit the program
-
-
 
 
