@@ -1,4 +1,4 @@
-# LevH - Parser version 2.4
+# LevH mGenes - Parser version 2.4
 
 This is a README file of LevHai Parser version 2.4. <br>
 The LevHai Parser takes LevHai output files from Partek analysis as input, and creates 2 csv final report files as output. <br>
