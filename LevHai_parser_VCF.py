@@ -443,13 +443,16 @@ def find_files():
 
     # Find the text file in the current path location
     for file in os.listdir():
-        if file.endswith('.vcf') and 'P1' in file:
+        # if file contains Pool continue
+        if file.__contains__('Pool'):
+            continue
+        if file.endswith('wip.vcf') and 'P1' in file:
             vcf_files.append(file)
             print("found P1 vcf file")
             print(vcf_files)
             continue
 
-        if file.endswith('.vcf') and 'P2' in file:
+        if file.endswith('wip.vcf') and 'P2' in file:
             vcf_files.append(file)
             print("found P2 vcf file")
             print(vcf_files)
@@ -461,23 +464,30 @@ def create_edited_vcf_file(data, plate):
     """
     The create_edited_vcf_file function creates a file converted_data_VCF_PX_Edited.json and saves the data list in it.
     The function uses on the data list - on each of the SampleName keys, replace dash with underscore and remove suffix.
+    It also adds a new column to the converted_data_VC_Edited dataset as a concatenation of ID and SampleName.
 
     :param data: Pass the data list to the function
     :param plate: Determine which file to open and write the data list in
     :return: The data list
-    :doc-author: Trelent
+    :doc-author: Sigal
     """
-    # create a file converted_data_VCF_P1_Edited.json and save the data list in it
+    # Add a new column to the converted_data_VC_Edited dataset
+    for item in data:
+        item["Key"] = item["ID"] + "_" + item["SampleName"]
+
+    # Create a file converted_data_VCF_PX_Edited.json and save the data list in it
     if plate == 'P1':
         with open('config/converted_data_VCF_P1_Edited.json', 'w') as outfile:
-            # use on the data list - on each of the SampleName keys the function replace_dash_with_underscore and
+            # Use on the data list - on each of the SampleName keys the function replace_dash_with_underscore and
             # remove_suffix
             json.dump(data, outfile, indent=4)
     elif plate == 'P2':
         with open('config/converted_data_VCF_P2_Edited.json', 'w') as outfile:
-            # use on the data list - on each of the SampleName keys the function replace_dash_with_underscore and
+            # Use on the data list - on each of the SampleName keys the function replace_dash_with_underscore and
             # remove_suffix
             json.dump(data, outfile, indent=4)
+
+    return data
 
 
 def create_final_result(plate):
@@ -541,12 +551,18 @@ def run_sub_process(lib_plate):
 
     working_dir = input("Enter the working directory (wsl): ")
     rs_list = input("Enter the rs list file name: ")
+    DP_value = input("Enter the DP value: (default is 35)")
+    if DP_value == "":
+        DP_value = "35"
+
     # cmd01 = f"bcftools filter -i 'ID=@/mnt/c/Users/User/LevHai/Filter_ToInclude_rs_list_v4.txt' -o '/mnt/c/Users/User/LevHai/{lib_plate}/Partek_{lib_plate}_Filetr.vcf' '/mnt/c/Users/User/LevHai/{lib_plate}/Partek_{lib_plate}.vcf'"
     # cmd02 = f"bcftools query -f '%CHROM\t%POS\t%ID\t%REF\t%ALT\t%TYPE[\t%TGT][\t%DP]\n' --print-header '/mnt/c/Users/User/LevHai/{lib_plate}/Partek_{lib_plate}_Filetr.vcf' -o '/mnt/c/Users/User/LevHai/{lib_plate}wip.vcf'"
-    cmd01 = f"bcftools filter -i 'ID=@{working_dir}/{rs_list}' -o '{working_dir}/{lib_plate}/Partek_{lib_plate}_Filetr.vcf' '{working_dir}/{lib_plate}/Partek_{lib_plate}.vcf'"
-    cmd02 = f"bcftools query -f '%CHROM\t%POS\t%ID\t%REF\t%ALT\t%TYPE[\t%TGT][\t%DP]\n' --print-header '{working_dir}/{lib_plate}/Partek_{lib_plate}_Filetr.vcf' -o '{working_dir}/{lib_plate}wip.vcf'"
 
-    process = subprocess.Popen(["wsl", "bash", "-c", f"cd {working_dir} && {cmd01} && {cmd02}"],
+    cmd01 = f"bcftools filter -i 'ID=@{working_dir}/{rs_list}' -o '{working_dir}/{lib_plate}/Partek_{lib_plate}_Filetr.vcf' '{working_dir}/{lib_plate}/Partek_{lib_plate}.vcf'"
+    cmd02 = f"bcftools filter -S . -e 'FMT/DP<{DP_value}' '{working_dir}/{lib_plate}/Partek_{lib_plate}_Filetr.vcf' > '{working_dir}/{lib_plate}temp.vcf'"
+    cmd03 = f"bcftools query -f '%CHROM\t%POS\t%ID\t%REF\t%ALT\t%TYPE[\t%TGT][\t%DP]\n' --print-header '{working_dir}/{lib_plate}temp.vcf' -o '{working_dir}/{lib_plate}wip.vcf'"
+
+    process = subprocess.Popen(["wsl", "bash", "-c", f"cd {working_dir} && {cmd01} && {cmd02} && {cmd03}"],
                                stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     # get the output of the subprocess
     output, error = process.communicate()
@@ -615,12 +631,78 @@ def check_valid_input(lib_plate):
     return lib_plate
 
 
-if __name__ == '__main__':
-    print("Welcome to files Parser - LevHai_parser_VCF.py version 1.0\n")
-    print("This program converts 2 vcf files by your choice - please follow the instructions\n")
+def replace_pipe_with_slash(input_file, output_file):
+    """
+    The replace_pipe_with_slash function takes two arguments:
+        - input_file: The name of the file to read from.
+        - output_file: The name of the file to write to.
 
+    :param input_file: Specify the path to the input file
+    :param output_file: Specify the name of the file to which
+    :return: None
+    :doc-author: Sigal
+    """
+    try:
+        # Open the input file and read its contents
+        with open(input_file, "r") as file:
+            contents = file.read()
+
+        # Replace "|" with "/"
+        modified_contents = contents.replace("|", "/")
+
+        # Write the modified contents to the output file
+        with open(output_file, "w") as file:
+            file.write(modified_contents)
+
+        print("File successfully processed.")
+
+    except FileNotFoundError:
+        print("The input file was not found.")
+
+    except Exception as e:
+        print("An error occurred during file processing:", e)
+
+
+def edit_vcf_stars(input_file, output_file):
+    try:
+        # Open the input file and read its contents
+        with open(input_file, "r") as file:
+            contents = file.read()
+
+        # Define the dictionary mapping original values to modified values
+        replacements = {
+            "C/*": "C/C",
+            "G/*": "G/G",
+            "T/*": "T/T",
+            "A/*": "A/A",
+            "*/C": "C/C",
+            "*/G": "G/G",
+            "*/T": "T/T",
+            "*/A": "A/A"
+        }
+
+        # Replace each instance of the original with the value in the dictionary
+        for key, value in replacements.items():
+            contents = contents.replace(key, value)
+
+        # Write the modified contents to the output file
+        with open(output_file, "w") as file:
+            # ensure that the file is empty before writing to it - delete all the content
+            file.truncate(0)
+            file.write(contents)
+
+        print("File successfully processed.")
+
+    except FileNotFoundError:
+        print("The input file was not found.")
+
+    except Exception as e:
+        print("An error occurred during file processing:", e)
+
+
+def runPlate():
     # input for the library and plate number of the first plate
-    lib_plate = input("Please enter the library and plate you would like to run(e.g. L07P1): ")
+    lib_plate = input("Please enter the libary and plate you would like to run(e.g. L07P1): ")
     # check if the input is valid
     lib_plate = check_valid_input(lib_plate)
     # run the sub process - run on wsl the bcftools commands
@@ -628,15 +710,28 @@ if __name__ == '__main__':
     # copy the wip.vcf file to the working directory
     copy_wip_vcf(lib_plate)
     # input for the library and plate number of the second plate
-    lib_plate = input("Please enter the Library number and Plate number of the second plate (e.g. L07P2): ")
-    # check if the input is valid
-    lib_plate = check_valid_input(lib_plate)
-    # run the sub process - run on wsl the bcftools commands
-    run_sub_process(lib_plate)
-    # copy the wip.vcf file to the working directory
-    copy_wip_vcf(lib_plate)
-    # create an object of the class Rs_catalog
+    # input for the library and plate number of the second plate
+    result = input("Would you like to edit the wip file? (y/n): ")
+    while result != 'y' and result != 'n':
+        print("Invalid input, please try again")
+        result = input("Would you like to edit the wip file? (y/n): ")
+
+    if result == 'y':  # if the answer is yes, replace the pipe with splash and the *
+        replace_pipe_with_slash(f"{lib_plate}wip.vcf", f"{lib_plate}wip1.vcf")
+        edit_vcf_stars(f"{lib_plate}wip1.vcf", f"{lib_plate}wip.vcf")
+        print("The file was edited successfully")
+
+
+if __name__ == '__main__':
     rs_catalog = Rs_catalog('rs catalog.txt')
+    print("Welcome to files Parser - LevHai_parser_VCF.py version 2.4\n")
+    print("This program converts vcf files by your choice - please follow the instructions\n")
+    result = input("Would you like to run the program on 1 plate or on 2 plates?\n")
+    if result == "1":
+        runPlate()
+    if result == "2":
+        runPlate()
+        runPlate()
     # look for the files in the working directory and create a list of the files
     vcf_files_found = find_files()
     for file in tqdm(vcf_files_found, desc="Processing VCF files"):
