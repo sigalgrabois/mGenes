@@ -15,7 +15,7 @@ The rest of the columns are the samples from the plate, each sample is given a g
 
 The LevHai Parser contains 4 different scripts:
 
-1. LevHai parser rs_catalog_v2.3.py - creates a json file from the rs catalog file. <br>
+1. LevHai parser rs_catalog_v2.4.py - creates a json file from the rs catalog file. <br>
 2. LevHai parser SampleSh.&Sums_v2.3.py - creates a json file from the sample sheet and region summaries. <br>
 3. LevHai_parser_VCF.py - creates a json file from vcf files and procesess the final reports. <br>
 4. sample_poolv2.3.py - create json files from the input files for the pool. <br>
