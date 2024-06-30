@@ -2,7 +2,7 @@
 
 ## About the Project
 
-LevHai Parser version 2.4 processes Partek analysis output files, converting them into comprehensive CSV reports with genotype data for each sample.
+LevHai Parser version 2.4 processes initial variant analysis output files, converting them into comprehensive CSV reports with genotype data for each sample.
 
 ## How to Use - Developer
 
