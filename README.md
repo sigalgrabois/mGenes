@@ -27,6 +27,8 @@ This script finds the following files in the working directory and parses them i
 4. RegionReportSummary_P1_TXA.txt
 5. RegionReportSummary_P2_TXA.txt
 
+Note: The input files are not added to the repo since it considered PHI.
+
 **Output Files:**
 1. SampleSheet.json
 2. converted_data_P1_rs.json
