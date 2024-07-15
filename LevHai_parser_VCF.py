@@ -385,51 +385,6 @@ def check_depth(sample, rs, plate):
     return -1
 
 
-# this function gets a sample object and the catalog and adds the rs that are in the catalog but not in the sample
-def add_missing_rs(sample, catalog):
-    """
-    The add_missing_rs function takes in a sample object and a catalog object as parameters.
-    It opens the rs_summary_reign file and loops over the sample.missing_rs list to create a list of the rs content in the sample.
-    The function then checks if each missing rs is above or below 25 depth, if it is above 25 depth it adds true to sample.flag
-    and adds that missing rs to converted_data_VCF_P2 file with its corresponding information, otherwise it sets flag = false
-    and does not add that missing rs to converted data VCF P2.
-
-    :param sample: Access the sample
-    :param catalog: Find the index of the rs in the catalog
-    :return: The sample object
-    :doc-author: Sigal
-    """
-    # # open the rs_summary_reign file
-    # loop over the sample.missing_rs list and create a list of the rs content in the sample
-    rs_content = []
-    # loop over the sample.missing_rs list and check the depth of each rs
-    for i in range(len(sample.rs_missing)):
-        # check the depth of the rs
-        depth = check_depth(sample.Sample_ID, sample.rs_missing[i])
-        # if the depth is -1 then add the rs to the sample.missing_rs list
-        index = catalog.find_index(sample.rs_missing[i])
-        if depth == -1:
-            print("rs not found in the summary reign file")
-            sample.flag = -1
-        # if the depth is not -1 then check if it is above the threshold of 25 and if it is above the threshold add true to sample.flag
-        # and add the rs to the sample.missing_rs list
-        else:
-            if int(depth) > 25:
-                sample.flag = True
-                sample_gt = f"{catalog.REF[index]}/{catalog.REF[index]}"
-
-            else:
-                sample.flag = False
-                sample_gt = "./."
-            rs_content.append(
-                {"CHROM": catalog.CHROM[index], "POS": catalog.POS[index], "ID": sample.rs_missing[i],
-                 "REF": catalog.REF[index],
-                 "ALT": catalog.ALT[index], "TYPE": "SNP", "SampleName": sample.Sample_ID,
-                 "SampleGT": sample_gt, "SampleDP": f"({depth})"})
-    # add the rs content to the converted_data_VCF_P1.json file and save it open the file with no with statement and with append mode
-    with open('config/converted_data_VCF_P1.json', 'a') as outfile:
-        json.dump(rs_content, outfile, indent=4)
-
 
 def find_files():
     """
