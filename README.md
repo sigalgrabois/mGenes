@@ -10,8 +10,7 @@ The LevHai Parser contains the following scripts:
 1. **LevHai parser SampleSh.&Sums_v2.4.py** - Generates JSON files from the sample sheet and region summaries.
 2. **LevHai_parser_VCF.py** - Processes VCF files and generates the final reports.
 3. **LevHai parser rs_catalog_v2.4.py** - Generates a JSON file from the rs catalog file.
-4. **edit_catalog.py** - Edits the rs catalog file.
-5. **sample_poolv2.4.py** - Creates JSON files from the input files for the pool.
+4. **sample_poolv2.4.py** - Creates JSON files from the input files for the pool.
 
 ## Usage Guide
 
