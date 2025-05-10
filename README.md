@@ -42,8 +42,7 @@ This script finds the following files in the working directory and parses them i
 
 **Input Files:**
 1. rs catalog.txt (updated catalog)
-2. config/converted_data_VCF_P1.json (created by LevHai Parser SampleSh.&Sums_v2.4.py)
-3. config/converted_data_VCF_P2.json (created by LevHai Parser SampleSh.&Sums_v2.4.py)
+2. VCF files from Partek server.
 
 **Output Files:**
 1. rs_not_found.txt
