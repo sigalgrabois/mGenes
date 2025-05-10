@@ -74,10 +74,7 @@ This script receives the library and plate number of the VCF file from the user 
 - Input files containing PHI (Protected Health Information) are not included in this repository.
 - Please ensure the appropriate files are placed in the working directory before running each script.
 
-## Performance Optimization
 
-- The code uses LRU (Least Recently Used) caching to optimize performance for repetitive operations, particularly when processing large genomics datasets.
-- This optimization significantly reduces disk I/O operations and processing time when analyzing multiple samples.
 
 ## Requirements
 
